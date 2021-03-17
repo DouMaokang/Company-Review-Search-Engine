@@ -1,5 +1,6 @@
 import SearchBar from "./components/SearchBar";
 import PieChart from "./components/PieChart";
+import LineChart from "./components/LineChart";
 import React from "react";
 
 function App() {
@@ -7,6 +8,7 @@ function App() {
     <div>
       <SearchBar />
       <PieChart />
+      <LineChart />
     </div>
   );
 }
