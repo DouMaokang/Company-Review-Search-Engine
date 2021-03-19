@@ -12,7 +12,7 @@ source env/bin/activate
 ```
 Install Python dependencies
 ```
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 # Run the application
