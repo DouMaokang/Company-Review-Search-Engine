@@ -16,7 +16,7 @@ pip install -r requirements.txt
 ```
 
 # Run the application
-Run the below command in `./Backend/webapp
+Run the below command in `./Backend/webapp`
 ```
 python manage.py runserver
 ```
