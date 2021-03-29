@@ -15,7 +15,7 @@ function LineChart() {
         datasets: [
           {
             label: 'review trend',
-            data: positivity.filter(o => o.type == 'expense').map(o => ({ x: o.date, y: o.amount })),
+            data: positivity.filter(o => o.type === 'expense').map(o => ({ x: o.date, y: o.amount })),
             fill: false,
             backgroundColor: 'rgb(255, 99, 132)',
             borderColor: 'rgba(255, 99, 132, 0.2)',

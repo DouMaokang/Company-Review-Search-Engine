@@ -19,5 +19,6 @@ from api import views
 
 urlpatterns = [
     path('preprocess/', views.preprocess),
+    path('wordcloud/', views.wordcloud),
     path('admin/', admin.site.urls),
 ]
