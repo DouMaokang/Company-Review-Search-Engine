@@ -13,7 +13,6 @@ def preprocess_text(text):
     tokens_without_stopwords = remove_stopwords(tokens)
     processed_tokens = correct_spelling_and_stemming(tokens_without_stopwords)
     result = remove_punctuation(processed_tokens)
-
     return result
 
 def remove_stopwords(tokens):
@@ -26,8 +25,7 @@ def correct_spelling_and_stemming(tokens):
 
     for idx, val in enumerate(tokens):
         tokens[idx] = correction(val)
-        tokens[idx] = ps.stem(val)
-
+        tokens[idx] = ps.stem(tokens[idx] ) 
     return tokens
 
 def remove_punctuation(tokens):
