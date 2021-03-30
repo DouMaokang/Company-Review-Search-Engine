@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import SearchBar from "./components/SearchBar";
 import PieChart from "./components/PieChart";
 import LineChart from "./components/LineChart";
+import Histogram from "./components/Histogram";
 import ReactWordcloud from 'react-wordcloud';
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
       <SearchBar search={request_search_result} />
       <PieChart />
       <LineChart />
+      <Histogram />
       {render_wordcloud()}
       <input type="text" onChange={handleChange} />
       <button onClick={request_wordcloud}>
