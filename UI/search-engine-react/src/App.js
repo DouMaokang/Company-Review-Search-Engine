@@ -8,6 +8,7 @@ function App() {
   
   const [words, setWords] = useState([]);
   const [company, setCompany] = useState('');
+  const [searchResults, setSearchResults] = useState([])
 
   const options = {
     rotations: 0,
@@ -30,6 +31,17 @@ function App() {
       })
   }
 
+  function request_search_result(e) {
+    e.preventDefault();
+    fetch(`http://localhost:8000/search/?query=wrk`, {
+      method: 'GET'})
+      .then(response => response.json())
+      .then(data => {
+        setSearchResults(old => [...old, ...data.hits.hits])
+      })
+      .then(data => console.log(searchResults))
+  }
+
   function render_wordcloud() {
     return (<div style={{ height: 400, width: 600 }}>
       <ReactWordcloud words={words} options={options}/>
@@ -38,7 +50,7 @@ function App() {
 
   return (
     <div>
-      <SearchBar />
+      <SearchBar search={request_search_result} />
       <PieChart />
       <LineChart />
       {render_wordcloud()}
