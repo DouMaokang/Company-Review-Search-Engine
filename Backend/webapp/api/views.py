@@ -29,7 +29,7 @@ def wordcloud(request):
 def search(request):
     if request.method == 'GET':
         processed_query = preprocess_text(request.query_params['query'])
-        body='{{"query": {{"match": {{"token": {{"query": "{content}"}}}}}}}}'.format(content=processed_query)
+        body='{{"size": 1000, "query": {{"match": {{"token": {{"query": "{content}"}}}}}}}}'.format(content=processed_query)
         # body = '{"query": {"match": {"token":  {"query": "work"}}}}'
 
         response = requests.request(method='get', url='http://localhost:9200/indeed/_search/', headers={"content-type":"application/json"}, data=body)
