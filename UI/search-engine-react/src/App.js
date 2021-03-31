@@ -4,6 +4,7 @@ import PieChart from "./components/PieChart";
 import LineChart from "./components/LineChart";
 import Histogram from "./components/Histogram";
 import ReactWordcloud from 'react-wordcloud';
+import ReactTable from "./components/ReactTable"
 
 function App() {
   
@@ -60,6 +61,8 @@ function App() {
       <button onClick={request_wordcloud}>
         Get WordCloud
       </button>
+      {searchResults.map((row) => console.log(row))}
+      <ReactTable searchResults={searchResults}/>
     </div>
   );
 }
