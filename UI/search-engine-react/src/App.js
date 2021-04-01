@@ -57,7 +57,7 @@ function App() {
 
   useEffect(() => {
     getSemanticAnalysisData()
-    render_bar_chart()
+    render_pie_chart()
   }, [searchResults]) 
 
   function getPositiveness() {
@@ -94,7 +94,7 @@ function App() {
     ]})
   }
 
-  function render_bar_chart() {
+  function render_pie_chart() {
     if (searchResults.length != 0) {
       const result = searchResults.reduce((r, {_source}) => {
         let dateObj = new Date(_source.date);
