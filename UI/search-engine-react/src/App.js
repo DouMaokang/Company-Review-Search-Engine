@@ -11,6 +11,7 @@ function App() {
   const [words, setWords] = useState([]);
   const [company, setCompany] = useState('');
   const [searchResults, setSearchResults] = useState([])
+  const [histogramData, setHistogramData] = useState([])
   const [pieChartData, setPieChartData] = useState({
     labels: [
       'positive',
@@ -55,10 +56,27 @@ function App() {
     setCompany(e.target.value)
   }
 
-  useEffect(() => {
-    getSemanticAnalysisData()
-    render_pie_chart()
-  }, [searchResults]) 
+  function renderHistogram(){
+    if (searchResults.length != 0) {
+      const result = searchResults.reduce((r, {_source}) => {
+        let employer = _source.company;
+        if(!r[employer]) {
+          r[employer] = {employer,review_count: 1}
+        }
+        else{
+          r[employer].review_count++;
+        }
+        return r;
+
+      }, {})
+      console.log(result);
+      let result_arr = Object.keys(result).map(e => {
+        return result[e];
+      });
+      setHistogramData(result_arr);
+    }
+  }
+
 
   function getPositiveness() {
     const classification = ['positive', 'negative', 'neutral']
@@ -161,6 +179,12 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    getSemanticAnalysisData()
+    render_pie_chart()
+    renderHistogram()
+  }, [searchResults])
+
   function reqeust_search_result_by_company(e, query, company) {
     e.preventDefault();
     fetch(`http://localhost:8000/search_by_company/?company=${company}&query=${query}`, {
@@ -198,7 +222,7 @@ function App() {
       </button>
       {searchResults.length !== 0 && <PieChart pieChartData={pieChartData} />}
       {searchResults.length !== 0 && <LineChart lineChartData={lineChartData} />}
-      <Histogram />
+      {searchResults.length !== 0 && <Histogram histogramData={histogramData}/>}
       {words.length !== 0 && render_wordcloud()}
       <input type="text" onChange={handleChangeCompany} />
       <button onClick={request_wordcloud}>
