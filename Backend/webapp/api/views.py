@@ -42,8 +42,9 @@ def search(request):
 @api_view(['GET'])
 def search_by_company(request):
     if request.method == 'GET':
+        query = request.GET['query']
         company = request.query_params['company']
-        if 'query' in request.GET:
+        if query is not None and query != '':
             processed_query = preprocess_text(request.query_params['query'])
             body = {'size': 1000, 'query': {'bool': {'must': [{"match": { "company": company}}, {"match": { "tokens": processed_query}}]}}}
         else:

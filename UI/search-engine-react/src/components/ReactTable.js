@@ -33,7 +33,7 @@ function ReactTable({searchResults}) {
               <TableCell component="th" scope="row">
                 {row._source.company}
               </TableCell>
-              <TableCell align="left">{row._source.tokens}</TableCell>
+              <TableCell align="left">{row._source.content}</TableCell>
               <TableCell align="left">"random positivity"</TableCell>
             </TableRow>)}
           </TableBody>

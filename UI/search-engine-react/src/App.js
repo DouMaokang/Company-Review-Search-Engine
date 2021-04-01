@@ -114,23 +114,36 @@ function App() {
         else if (randomElement === "neutral") r[monthyear].neutral_count++;
         return r;
       }, {})
+      
       let result_arr = Object.keys(result).map(e => {
         return result[e];
       });
       result_arr.sort(function (a, b) {
         return a.monthyear.localeCompare(b.monthyear);
       });
+      console.log(result_arr)
       setLineChartData({...lineChartData, datasets: [
         {
-          label: 'review trend',
+          label: 'positive count',
           data: result_arr.map(o => ({ x: o.monthyear, y: o.positive_count })),
-          // data: [],
+          fill: true,
+          backgroundColor: "rgba(75,192,192,0.2)",
+          borderColor: "rgba(75,192,192,1)"
+        },
+        {
+          label: 'negative count',
+          data: result_arr.map(o => ({ x: o.monthyear, y: o.negative_count })),
           fill: false,
           backgroundColor: 'rgb(255, 99, 132)',
-          borderColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: "#742774",
         },
+        {
+          label: 'neutral count',
+          data: result_arr.map(o => ({ x: o.monthyear, y: o.neutral_count })),
+          fill: false,
+          borderColor: 'rgb(255, 99, 132)',
+        }
       ]})
-      console.log(result_arr)
     }
   }
 
@@ -138,12 +151,14 @@ function App() {
     setWords([])
     const headers =[]
     e.preventDefault();
-    fetch(`http://localhost:8000/wordcloud/?company=${company}`, {
-      method: 'GET'})
-      .then(response => response.json())
-      .then(data => {
-        setWords(data)
-      })
+    if (company.length != 0) {
+      fetch(`http://localhost:8000/wordcloud/?company=${company}`, {
+        method: 'GET'})
+        .then(response => response.json())
+        .then(data => {
+          setWords(data)
+        })
+    }
   }
 
   function reqeust_search_result_by_company(e, query, company) {
@@ -163,7 +178,6 @@ function App() {
     method: 'GET'})
     .then(response => response.json())
     .then(data => {
-      console.log(data)
       setSearchResults(data.hits.hits)
     })
   }
