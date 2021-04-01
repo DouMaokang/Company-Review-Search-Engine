@@ -38,7 +38,6 @@ function App() {
     datasets: [
       {
         label: 'review trend',
-        // data: lineChartData.map(o => ({ x: o.monthyear, y: o.positive_count })),
         data: [],
         fill: false,
         backgroundColor: 'rgb(255, 99, 132)',
