@@ -29,7 +29,7 @@ function ReactTable({searchResults}) {
             </TableRow>
           </TableHead>
           <TableBody>
-          {searchResults.map((row) => <TableRow key={row._source.company}>
+          {searchResults.slice(0,9).map((row, index) => <TableRow key={index}>
               <TableCell component="th" scope="row">
                 {row._source.company}
               </TableCell>
@@ -39,9 +39,6 @@ function ReactTable({searchResults}) {
           </TableBody>
         </Table>
       </TableContainer>
-    //   <React.Fragment>
-    //     {searchResults.map((row) => console.log(row._source.company))}
-    //   </React.Fragment>
     );
   };
   

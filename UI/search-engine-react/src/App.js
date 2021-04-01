@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import SearchBar from "./components/SearchBar";
 import PieChart from "./components/PieChart";
 import LineChart from "./components/LineChart";
@@ -11,15 +11,42 @@ function App() {
   const [words, setWords] = useState([]);
   const [company, setCompany] = useState('');
   const [searchResults, setSearchResults] = useState([])
+  const [histogramData, setHistogramData] = useState([])
 
   const options = {
     rotations: 0,
     rotationAngles: [0, 0],
   };
 
+  function renderHistogram(){
+    if (searchResults.length != 0) {
+      const result = searchResults.reduce((r, {_source}) => {
+        let employer = _source.company;
+        if(!r[employer]) {
+          r[employer] = {employer,review_count: 1}
+        }
+        else{
+          r[employer].review_count++;
+        }
+        return r;
+        
+      }, {})
+      console.log(result);
+      let result_arr = Object.keys(result).map(e => {
+        return result[e];
+      });
+      setHistogramData(result_arr);
+    }
+  }
+
+  useEffect(() => {
+    renderHistogram()
+  }, [searchResults])
+
   function handleChange(e) {
     setCompany(e.target.value)
   }
+
 
   function request_wordcloud(e) {
     setWords([])
@@ -55,7 +82,7 @@ function App() {
       <SearchBar search={request_search_result} />
       <PieChart />
       <LineChart />
-      <Histogram />
+      <Histogram histogramData={histogramData}/>
       {render_wordcloud()}
       <input type="text" onChange={handleChange} />
       <button onClick={request_wordcloud}>
