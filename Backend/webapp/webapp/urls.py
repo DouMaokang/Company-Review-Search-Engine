@@ -21,5 +21,6 @@ urlpatterns = [
     path('preprocess/', views.preprocess),
     path('wordcloud/', views.wordcloud),
     path('search/', views.search),
+    path('search_by_company/', views.search_by_company),
     path('admin/', admin.site.urls),
 ]

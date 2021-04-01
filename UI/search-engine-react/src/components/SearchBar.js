@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState }  from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -11,13 +11,10 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
     },
     title: {
-        // flexGrow: 1,
         display: 'none',
         [theme.breakpoints.up('sm')]: {
             display: 'block',
         },
-        // marginRight: theme.spacing(5),
-
     },
     search: {
         position: 'relative',
@@ -26,7 +23,6 @@ const useStyles = makeStyles((theme) => ({
         '&:hover': {
             backgroundColor: fade(theme.palette.common.white, 0.25),
         },
-        // marginLeft: theme.spacing(5),
         width: '100%',
         [theme.breakpoints.up('sm')]: {
             marginLeft: theme.spacing(1),
@@ -47,7 +43,6 @@ const useStyles = makeStyles((theme) => ({
     },
     inputInput: {
         padding: theme.spacing(1, 1, 1, 0),
-        // vertical padding + font size from searchIcon
         paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
         transition: theme.transitions.create('width'),
         width: '100%',
@@ -62,6 +57,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SearchBar({search}) {
     const classes = useStyles();
+    const [searchText, setSearchText] = useState('');
 
     return (
         <div className={classes.root}>
@@ -80,10 +76,11 @@ export default function SearchBar({search}) {
                                 root: classes.inputRoot,
                                 input: classes.inputInput,
                             }}
+                            onChange={e => setSearchText(e.target.value)}
                             inputProps={{ 'aria-label': 'search' }}
                         />
                     </div>
-                    <button onClick={search}>
+                    <button onClick={e => search(e, searchText)}>
                         Search
                     </button>
                 </Toolbar>

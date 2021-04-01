@@ -28,12 +28,20 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 CORS_ORIGIN_ALLOW_ALL = True
 
+# ELASTICSEARCH_DSL = {
+#     'default': {
+#         'hosts': 'elasticsearch:9200'
+#     },
+# }
+
 # Application definition
 
 INSTALLED_APPS = [
     'api',
     'rest_framework',
     'corsheaders',
+    # 'django_elasticsearch_dsl',
+    # 'django_elasticsearch_dsl_drf',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
