@@ -23,7 +23,7 @@ function ReactTable({searchResults}) {
               <TableCell size="small">Top</TableCell>
               <TableCell size="small">Company</TableCell>
               <TableCell size="small">Review</TableCell>
-              <TableCell size="small">Positivity</TableCell>
+              <TableCell size="small">Sentiment</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -33,8 +33,8 @@ function ReactTable({searchResults}) {
               <TableCell component="th" scope="row">
                 {row._source.company}
               </TableCell>
-              <TableCell align="left">{row._source.content}</TableCell>
-              <TableCell align="left">"random positivity"</TableCell>
+              <TableCell align="left">{row._source.review_raw}</TableCell>
+              <TableCell align="left">{row._source.sentiment}</TableCell>
             </TableRow>)}
           </TableBody>
         </Table>

@@ -22,5 +22,8 @@ urlpatterns = [
     path('wordcloud/', views.wordcloud),
     path('search/', views.search),
     path('search_by_company/', views.search_by_company),
+    path('get_latest_date', views.request_latest_doc_date),
+    path('add_latest_data', views.add_docs_in_next_day),
+    path('get_total_reviews', views.get_total_reviews),
     path('admin/', admin.site.urls),
 ]

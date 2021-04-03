@@ -12,34 +12,23 @@ function LineChart({lineChartData}) {
                 type: 'time',
                 time: {
                   displayFormats: {
-                    // 'millisecond': 'MMM YY',
-                    // 'second': 'MMM YY',
-                    // 'minute': 'MMM YY',
-                    // 'hour': 'MMM YY',
-                    // 'day': 'MMM YY',
-                    // 'week': 'MMM YY',
-                    'month': 'MMM YY',
-                    'quarter': 'MMM YY',
-                    'year': 'MMM YY',
+                    'month': 'MMM YYYY',
+                    'quarter': 'MMM YYYY',
+                    'year': 'MMM YYYY',
                   }
                 }
               },
-              {
-                type: 'time',
-                time: {
-                  displayFormats: {
-                    // 'millisecond': 'MMM YY',
-                    // 'second': 'MMM YY',
-                    // 'minute': 'MMM YY',
-                    // 'hour': 'MMM YY',
-                    // 'day': 'MMM YY',
-                    // 'week': 'MMM YY',
-                    'month': 'MMM YY',
-                    'quarter': 'MMM YY',
-                    'year': 'MMM YY',
-                  }
-                }
-              }],
+              // {
+              //   type: 'time',
+              //   time: {
+              //     displayFormats: {
+              //       'month': 'MMM YYYY',
+              //       'quarter': 'MMM YYYY',
+              //       'year': 'MMM YYYY',
+              //     }
+              //   }
+              // }
+            ],
         },
       }
 

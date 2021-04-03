@@ -6,7 +6,7 @@ from nltk.corpus import stopwords
 
 def generate_wordcloud(company):
     CURRENT_FOLDER = os.path.dirname(os.path.abspath(__file__))
-    meta_data_file = os.path.join(CURRENT_FOLDER, 'metadata.csv')
+    meta_data_file = os.path.join(CURRENT_FOLDER, 'metadata_with_sentiment.csv')
     df = pd.read_csv(meta_data_file, encoding ="utf8")
 
     comment_words = ''

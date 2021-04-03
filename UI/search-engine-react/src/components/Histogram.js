@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Paper from '@material-ui/core/Paper';
 import {
   Chart,
@@ -20,12 +20,10 @@ function Histogram({histogramData}) {
         <ValueAxis max={7} />
 
         <BarSeries
-          valueField="population"
-          argumentField="year"
           valueField="review_count"
           argumentField="employer"
         />
-        <Title text="Review Count" />
+        <Title text="Top 5 Review Count" />
         <Animation />
       </Chart>
     </Paper>
