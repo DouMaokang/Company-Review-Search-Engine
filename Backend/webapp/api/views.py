@@ -3,11 +3,17 @@ from rest_framework import views
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
+from elasticsearch_dsl.connections import connections
+from elasticsearch_dsl import Search
+from elasticsearch.helpers import bulk
+from elasticsearch import Elasticsearch
 import requests, json
 from .serializers import StringSerializer
 from .text_preprocesser import preprocess_text
 from .word_cloud_gen import generate_wordcloud
 from .spell_checker import correction
+
+es = Elasticsearch(host="localhost", port=9200)
 
 @api_view(['POST'])
 def preprocess(request):
@@ -29,8 +35,32 @@ def wordcloud(request):
 def search(request):
     if request.method == 'GET':
         processed_query = preprocess_text(request.query_params['query'])
-        body='{{"size": 1000, "query": {{"match": {{"token": {{"query": "{content}"}}}}}}}}'.format(content=processed_query)
-        # body = '{"query": {"match": {"token":  {"query": "work"}}}}'
+        body = {'size': 1000, 'query': {'match': {'review_tokens': processed_query}}}
+        response = es.search(index="indeed", body=body)
+    return Response(response, status=status.HTTP_200_OK)
 
-        response = requests.request(method='get', url='http://localhost:9200/indeed/_search/', headers={"content-type":"application/json"}, data=body)
-    return Response(response.json(), status=status.HTTP_200_OK)
+@api_view(['GET'])
+def search_by_company(request):
+    if request.method == 'GET':
+        query = request.GET['query']
+        company = request.query_params['company']
+        if query is not None and query != '':
+            processed_query = preprocess_text(request.query_params['query'])
+            body = {'size': 1000, 'query': {'bool': {'must': [{"match": { "company": company}}, {"match": { "review_tokens": processed_query}}]}}}
+        else:
+            body = {'size': 1000, 'query': {'bool': {'must': [{"match": { "company": company}}, {"match_all": {}}]}}}
+        response = es.search(index="indeed", body=body)
+    return Response(response, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def search_by_location(request):
+    if request.method == 'GET':
+        query = request.GET['query']
+        location = request.query_params['location']
+        if query is not None and query !='':
+            processed_query = preprocess_text(request.query_params['query'])
+            body = {'size': 1000, 'query': {'bool': {'must': [{"match": { "location": location}}, {"match": { "review_tokens": processed_query}}]}}}     
+        else:
+            body = {'size': 1000, 'query': {'bool': {'must': [{"match": { "location": location}}, {"match_all": {}}]}}}
+        response = es.search(index="indeed", body=body)
+    return Response(response, status=status.HTTP_200_OK)

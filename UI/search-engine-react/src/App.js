@@ -10,6 +10,7 @@ function App() {
   
   const [words, setWords] = useState([]);
   const [company, setCompany] = useState('');
+  const [location, setLocation] = useState('');
   const [searchResults, setSearchResults] = useState([])
   const [histogramData, setHistogramData] = useState([])
 
@@ -45,6 +46,7 @@ function App() {
 
   function handleChange(e) {
     setCompany(e.target.value)
+    setLocation(e.target.value)
   }
 
 
@@ -62,7 +64,7 @@ function App() {
 
   function request_search_result(e) {
     e.preventDefault();
-    fetch(`http://localhost:8000/search/?query=wrk`, {
+    fetch(`http://localhost:8000/search_by_location/?query=&location=New York`, {
       method: 'GET'})
       .then(response => response.json())
       .then(data => {
