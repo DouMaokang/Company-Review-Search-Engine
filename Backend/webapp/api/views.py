@@ -99,3 +99,16 @@ def get_total_reviews(request):
     if request.method == 'GET':
         total_reviews = es.indices.stats(index="indeed")['_all']['primaries']['indexing']['index_total']
     return Response(total_reviews, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def search_by_location(request):
+    if request.method == 'GET':
+        query = request.GET['query']
+        location = request.query_params['location']
+        if query is not None and query !='':
+            processed_query = preprocess_text(request.query_params['query'])
+            body = {'size': 1000, 'query': {'bool': {'must': [{"match": { "location": location}}, {"match": { "review_tokens": processed_query}}]}}}     
+        else:
+            body = {'size': 1000, 'query': {'bool': {'must': [{"match": { "location": location}}, {"match_all": {}}]}}}
+        response = es.search(index="indeed", body=body)
+    return Response(response, status=status.HTTP_200_OK) 

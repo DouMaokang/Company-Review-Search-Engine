@@ -9,6 +9,7 @@ import ReactTable from "./components/ReactTable"
 function App() {
   
   const [words, setWords] = useState([]);
+  const [location, setLocation] = useState('');
   const [company, setCompany] = useState('');
   const [lastUpdate, setLastUpdate] = useState('')
   const [totalReviews, setTotalReviews] = useState(0)
@@ -57,6 +58,10 @@ function App() {
 
   function handleChangeCompany(e) {
     setCompany(e.target.value)
+  }
+
+  function handleChangeLocation(e) {
+    setLocation(e.target.value)
   }
 
   function renderHistogram(){
@@ -201,6 +206,16 @@ function App() {
     })
   }
 
+  function reqeust_search_result_by_location(e, query, location) {
+    e.preventDefault();
+    fetch(`http://localhost:8000/search_by_location/?location=${location}&query=${query}`, {
+    method: 'GET'})
+    .then(response => response.json())
+    .then(data => {
+      setSearchResults(data.hits.hits)
+    })
+  }
+
   function request_search_result(e, query) {
     e.preventDefault();
     
@@ -248,14 +263,22 @@ function App() {
       <button onClick={e => reqeust_search_result_by_company(e, '', company)}>
         Go
       </button>
+      <p>Search by location</p>
+      <input type="text" onChange={handleChangeLocation} />
+      <button onClick={e => reqeust_search_result_by_location(e, '', location)}>
+        Go
+      </button>
       {searchResults.length !== 0 && <PieChart pieChartData={pieChartData} />}
       {searchResults.length !== 0 && <LineChart lineChartData={lineChartData} />}
       {searchResults.length !== 0 && <Histogram histogramData={histogramData}/>}
       {words.length !== 0 && render_wordcloud()}
-      <input type="text" onChange={handleChangeCompany} />
-      <button onClick={request_wordcloud}>
-        Get WordCloud
-      </button>
+      {/* <input type="text" onChange={handleChangeCompany} />
+      <input type="text" onChange={handleChangeLocation} /> */}
+      <div>
+        <button onClick={request_wordcloud}>
+          Get WordCloud
+        </button>
+      </div>
       <div>
         Last Updated: {lastUpdate}
         Toal Reviews: {totalReviews}
