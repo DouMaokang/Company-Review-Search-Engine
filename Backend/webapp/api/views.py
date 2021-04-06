@@ -97,7 +97,8 @@ def add_docs_in_next_day(request):
 @api_view(['GET'])
 def get_total_reviews(request):
     if request.method == 'GET':
-        total_reviews = es.indices.stats(index="indeed")['_all']['primaries']['indexing']['index_total']
+        total_reviews = es.indices.stats(index="indeed")['_all']['primaries']['docs']['count']
+        print(total_reviews)
     return Response(total_reviews, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
