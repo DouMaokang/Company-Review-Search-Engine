@@ -112,4 +112,30 @@ def search_by_location(request):
         else:
             body = {'size': 1000, 'query': {'bool': {'must': [{"match": { "location": location}}, {"match_all": {}}]}}}
         response = es.search(index="indeed", body=body)
-    return Response(response, status=status.HTTP_200_OK) 
+    return Response(response, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def search_by_company_category(request):
+    if request.method == 'GET':
+        query = request.GET['query']
+        company_category = request.query_params['company_category']
+        if query is not None and query !='':
+            processed_query = preprocess_text(request.query_params['query'])
+            body = {'size': 1000, 'query': {'bool': {'must': [{"match": { "category": company_category}}, {"match": { "review_tokens": processed_query}}]}}}     
+        else:
+            body = {'size': 1000, 'query': {'bool': {'must': [{"match": { "category": company_category}}, {"match_all": {}}]}}}
+        response = es.search(index="indeed", body=body)
+    return Response(response, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def search_by_employment_status(request):
+    if request.method == 'GET':
+        query = request.GET['query']
+        company = request.GET['company']
+        employment_status = request.query_params['status']
+        processed_query = preprocess_text(request.query_params['query'])
+        body = {"query": {"bool": {"must": [{"bool": {"must": [{"query_string": {"query": "*{}*".format(employment_status), "fields": ["job_title"]}}, {"match": {"review_tokens": processed_query}}, {"match": {"company": company}}]}}]}}}   
+        # else:
+        #     body = {'size': 1000, 'query': {'bool': {'must': [{"match": { "category": company_category}}, {"match_all": {}}]}}}
+        response = es.search(index="indeed", body=body)
+    return Response(response, status=status.HTTP_200_OK)

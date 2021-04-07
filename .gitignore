@@ -1,4 +1,7 @@
 /Backend/env
 **/__pycache__
+**/Pipfile
+**/Pipfile.lock
+/UI/package-lock.json
 .DS_Store
 node_modules

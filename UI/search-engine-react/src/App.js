@@ -7,10 +7,16 @@ import ReactWordcloud from 'react-wordcloud';
 import ReactTable from "./components/ReactTable"
 
 function App() {
-  
   const [words, setWords] = useState([]);
   const [location, setLocation] = useState('');
   const [company, setCompany] = useState('');
+  const [company_category, setCompanyCategory] = useState('');
+  const [status, setStatus] = useState('');
+  const [company_for_status, setCompanyForStatus] = useState('');
+  const [company_query, setCompanyQuery] = useState('')
+  const [location_query, setLocationQuery] = useState('')
+  const [company_category_query, setCompanyCategoryQuery] = useState('')
+  const [status_query, setStatusQuery] = useState('')
   const [lastUpdate, setLastUpdate] = useState('')
   const [totalReviews, setTotalReviews] = useState(0)
   const [loadText, setLoadText] = useState('')
@@ -56,13 +62,23 @@ function App() {
     rotationAngles: [0, 0],
   };
 
-  function handleChangeCompany(e) {
-    setCompany(e.target.value)
+  function clear_query(e) {
+    setCompany('')
+    setLocation('')
+    setCompanyCategory('')
+    setCompanyQuery('')
+    setLocationQuery('')
+    setCompanyCategory('')
+    setCompanyForStatus('')
   }
 
-  function handleChangeLocation(e) {
-    setLocation(e.target.value)
-  }
+  // function handleChangeCompany(e) {
+  //   setCompany(e.target.value)
+  // }
+
+  // function handleChangeLocation(e) {
+  //   setLocation(e.target.value)
+  // }
 
   function renderHistogram(){
     if (searchResults.length !== 0) {
@@ -196,9 +212,9 @@ function App() {
       .then(data => setTotalReviews(data))
   }, [])
 
-  function reqeust_search_result_by_company(e, query, company) {
+  function reqeust_search_result_by_company(e) {
     e.preventDefault();
-    fetch(`http://localhost:8000/search_by_company/?company=${company}&query=${query}`, {
+    fetch(`http://localhost:8000/search_by_company/?company=${company}&query=${company_query}`, {
     method: 'GET'})
     .then(response => response.json())
     .then(data => {
@@ -206,9 +222,9 @@ function App() {
     })
   }
 
-  function reqeust_search_result_by_location(e, query, location) {
+  function reqeust_search_result_by_company_category(e) {
     e.preventDefault();
-    fetch(`http://localhost:8000/search_by_location/?location=${location}&query=${query}`, {
+    fetch(`http://localhost:8000/search_by_company_category/?company_category=${company_category}&query=${company_category_query}`, {
     method: 'GET'})
     .then(response => response.json())
     .then(data => {
@@ -216,10 +232,30 @@ function App() {
     })
   }
 
-  function request_search_result(e, query) {
+  function reqeust_search_result_by_location(e) {
+    e.preventDefault();
+    fetch(`http://localhost:8000/search_by_location/?location=${location}&query=${location_query}`, {
+    method: 'GET'})
+    .then(response => response.json())
+    .then(data => {
+      setSearchResults(data.hits.hits)
+    })
+  }
+
+  function reqeust_search_result_by_status(e) {
+    e.preventDefault();
+    fetch(`http://localhost:8000/search_by_employment_status/?status=${status}&query=${status_query}&company=${company_for_status}`, {
+    method: 'GET'})
+    .then(response => response.json())
+    .then(data => {
+      setSearchResults(data.hits.hits)
+    })
+  }
+
+  function request_search_result(e, searchText) {
     e.preventDefault();
     
-    fetch(`http://localhost:8000/search/?query=${query}`, {
+    fetch(`http://localhost:8000/search/?query=${searchText}`, {
       method: 'GET'})
       .then(response => response.json())
       .then(data => {
@@ -259,22 +295,60 @@ function App() {
     <div>
       <SearchBar search={request_search_result} />
       <p>Search by company</p>
-      <input type="text" onChange={handleChangeCompany} />
-      <button onClick={e => reqeust_search_result_by_company(e, '', company)}>
+      Search keywords: <input type="text" value={company_query} onChange={e => setCompanyQuery(e.target.value)} />
+      Company name: <input type="text" value={company} onChange={e => setCompanyCategory(e.target.value)} />
+      <button onClick={e => reqeust_search_result_by_company(e)}>
         Go
       </button>
+      <button onClick={e => clear_query(e)}>Clear Query</button>
+
+      <p>Search by company category</p>
+      Search keywords: <input type="text" value={company_category_query} onChange={e => setCompanyCategoryQuery(e.target.value)} />
+      Category: <input type="text" value={company_category} onChange={e => setCompanyCategory(e.target.value)} />
+      <button onClick={e => reqeust_search_result_by_company_category(e)}>
+        Go
+      </button>
+      <button onClick={e => clear_query(e)}>Clear Query</button>
+
       <p>Search by location</p>
-      <input type="text" onChange={handleChangeLocation} />
-      <button onClick={e => reqeust_search_result_by_location(e, '', location)}>
+      Search keywords: <input type="text" value={location_query} onChange={e => setLocationQuery(e.target.value)} />
+      Location: <input type="text" value={location} onChange={e => setLocation(e.target.value)} />
+      <button onClick={e => reqeust_search_result_by_location(e)}>
         Go
       </button>
+      <button onClick={e => clear_query(e)}>Clear Query</button>
+
+      <p>Search by employment status</p>
+      Search keywords: <input type="text" value={status_query} onChange={e => setStatusQuery(e.target.value)} />
+      Company name: <input type="text" value={company_for_status} onChange={e => setCompanyForStatus(e.target.value)} />
+      Employment status: 
+      <select id="status" name="status" value={status} onChange={e => setStatus(e.target.value)}>
+        <option value="Current Employee">Current Employee</option>
+        <option value="Former Employee">Former Employee</option>
+      </select>
+      {/* <FormControl className={classes.formControl}>
+        <InputLabel id="demo-simple-select-label">Age</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={status}
+          onChange={e => setStatus(e.target.value)}
+        >
+            <MenuItem value={"Current Employee"}>Current Employee</MenuItem>
+        </Select>
+      </FormControl> */}
+        
+      <button onClick={e => reqeust_search_result_by_status(e)}>
+        Go
+      </button>
+      <button onClick={e => clear_query(e)}>Clear Query</button>
+
       {searchResults.length !== 0 && <PieChart pieChartData={pieChartData} />}
       {searchResults.length !== 0 && <LineChart lineChartData={lineChartData} />}
       {searchResults.length !== 0 && <Histogram histogramData={histogramData}/>}
       {words.length !== 0 && render_wordcloud()}
-      {/* <input type="text" onChange={handleChangeCompany} />
-      <input type="text" onChange={handleChangeLocation} /> */}
       <div>
+        <input type="text" value={company} onChange={e => setCompany(e.target.value)} />
         <button onClick={request_wordcloud}>
           Get WordCloud
         </button>

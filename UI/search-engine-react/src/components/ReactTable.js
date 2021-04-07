@@ -21,22 +21,24 @@ function ReactTable({searchResults}) {
           <TableHead>
             <TableRow>
               <TableCell size="small">Top</TableCell>
-              <TableCell size="small">Location</TableCell>
-              <TableCell size="small">Company</TableCell>
               <TableCell size="small">Review</TableCell>
               <TableCell size="small">Sentiment</TableCell>
+              <TableCell size="small">Company</TableCell>
+              <TableCell size="small">Location</TableCell>
+              <TableCell size="small">Category</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
           {searchResults.slice(0, 10).map((row, index) => 
               <TableRow key={index}>
               <TableCell align="left">{index+1}</TableCell>
-              <TableCell align="left">{row._source.location}</TableCell>
+              <TableCell align="left">{row._source.review_raw}</TableCell>
+              <TableCell align="left">{row._source.sentiment}</TableCell>
               <TableCell component="th" scope="row">
                 {row._source.company}
               </TableCell>
-              <TableCell align="left">{row._source.review_raw}</TableCell>
-              <TableCell align="left">{row._source.sentiment}</TableCell>
+              <TableCell align="left">{row._source.location}</TableCell>
+              <TableCell align="left">{row._source.category}</TableCell>
             </TableRow>)}
           </TableBody>
         </Table>

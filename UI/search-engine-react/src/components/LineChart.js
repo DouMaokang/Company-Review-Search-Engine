@@ -12,22 +12,12 @@ function LineChart({lineChartData}) {
                 type: 'time',
                 time: {
                   displayFormats: {
-                    'month': 'MMM YYYY',
-                    'quarter': 'MMM YYYY',
-                    'year': 'MMM YYYY',
+                    'month': 'DD MMM YYYY',
+                    'quarter': 'DD MMM YYYY',
+                    'year': 'DD MMM YYYY',
                   }
                 }
               },
-              // {
-              //   type: 'time',
-              //   time: {
-              //     displayFormats: {
-              //       'month': 'MMM YYYY',
-              //       'quarter': 'MMM YYYY',
-              //       'year': 'MMM YYYY',
-              //     }
-              //   }
-              // }
             ],
         },
       }

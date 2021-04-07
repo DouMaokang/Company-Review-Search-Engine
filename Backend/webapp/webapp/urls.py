@@ -26,5 +26,7 @@ urlpatterns = [
     path('add_latest_data', views.add_docs_in_next_day),
     path('get_total_reviews', views.get_total_reviews),
     path('search_by_location/', views.search_by_location),
+    path('search_by_company_category/', views.search_by_company_category),
+    path('search_by_employment_status/', views.search_by_employment_status),
     path('admin/', admin.site.urls),
 ]
