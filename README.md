@@ -1,6 +1,12 @@
 # NTU-CZ4034
 This repo contains the group project/assignment of CZ4034 - Information Retrieval
 
+# Things that needs to be installed
+1. Elasticsearch
+2. Elasticsearch python client
+3. Node.js
+4. Python3
+
 # Application Setup
 ### Backend
 Under `./Backend`, type in the command prompt
@@ -22,8 +28,8 @@ Under `./UI/search-engine-react`, type in the command prompt
 npm install
 ```
 
-### ElasticSearch
-Install ElasticSearch from `https://www.elastic.co/downloads/elasticsearch` and follow the installation steps at the bottom of the page
+### Elasticsearch
+Install Elasticsearch from `https://www.elastic.co/downloads/elasticsearch` and follow the installation steps at the bottom of the page
 
 Install elasticsearch python client by following `https://elasticsearch-py.readthedocs.io/en/v7.12.0/` 
 ```
@@ -38,10 +44,10 @@ The script will start indexing documents. It takes about 15mins - 30mins.
 
 When you see the text `done done done!` that means indexing has finished. 
 
-You may checked the total number of indexed documents by calling the API `http://localhost:9200/indeed/_stats` in Postman (Before calling the API, ensure taht ElasticSearch server is up and running on your machine)
+You may checked the total number of indexed documents by calling the API `http://localhost:9200/indeed/_stats` in Postman (Before calling the API, ensure taht Elasticsearch server is up and running on your machine)
 
 # Run the application
-### ElasticSearch
+### Elasticsearch
 Mac/Linux
 ```
 bin/elasticsearch
