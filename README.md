@@ -44,7 +44,7 @@ The script will start indexing documents. It takes about 15mins - 30mins.
 
 When you see the text `done done done!` that means indexing has finished. 
 
-You may checked the total number of indexed documents by calling the API `http://localhost:9200/indeed/_stats` in Postman (Before calling the API, ensure taht Elasticsearch server is up and running on your machine)
+You may checked the total number of indexed documents by calling the API `http://localhost:9200/indeed/_stats` in Postman (Before calling the API, ensure that Elasticsearch server is up and running on your machine)
 
 # Run the application
 ### Elasticsearch
