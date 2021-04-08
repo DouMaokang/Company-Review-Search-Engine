@@ -69,4 +69,4 @@ Run the below command in `./UI/search-engine-react`
 ```
 npm start
 ```
-After that, pen `http://localhost:3000/` to check the application
+After that, open `http://localhost:3000/` to check the application
