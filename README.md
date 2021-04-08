@@ -1,7 +1,8 @@
 # NTU-CZ4034
 This repo contains the group project/assignment of CZ4034 - Information Retrieval
 
-# Backend Setup
+# Application Setup
+### Backend
 Under `./Backend`, type in the command prompt
 ```
 python3 -m venv env
@@ -15,11 +16,28 @@ Install Python dependencies
 pip install -r requirements.txt
 ```
 
+### Frontend
+Under `./UI/search-engine-react`, type in the command prompt
+```
+npm install
+```
+
+### ElasticSearch
+Install ElasticSearch from https://www.elastic.co/downloads/elasticsearch and follow the installation steps at the bottom of the page
+
 # Run the application
+### Backend
 Run the below command in `./Backend/webapp`
 ```
 python manage.py runserver
 ```
+
+### Frontend
+Run the below command in `./UI/search-engine-react`
+```
+npm start
+```
+After that, pen `http://localhost:3000/` to check the application
 
 # Calling the API
 In Postman, set request to `POST http://localhost:8000/preprocess/`
