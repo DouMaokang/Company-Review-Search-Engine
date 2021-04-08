@@ -11,7 +11,7 @@ function App() {
   const [location, setLocation] = useState('');
   const [company, setCompany] = useState('');
   const [company_category, setCompanyCategory] = useState('');
-  const [status, setStatus] = useState('');
+  const [status, setStatus] = useState('Current Employee');
   const [company_for_status, setCompanyForStatus] = useState('');
   const [company_query, setCompanyQuery] = useState('')
   const [location_query, setLocationQuery] = useState('')
@@ -326,17 +326,6 @@ function App() {
         <option value="Current Employee">Current Employee</option>
         <option value="Former Employee">Former Employee</option>
       </select>
-      {/* <FormControl className={classes.formControl}>
-        <InputLabel id="demo-simple-select-label">Age</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={status}
-          onChange={e => setStatus(e.target.value)}
-        >
-            <MenuItem value={"Current Employee"}>Current Employee</MenuItem>
-        </Select>
-      </FormControl> */}
         
       <button onClick={e => reqeust_search_result_by_status(e)}>
         Go
