@@ -31,7 +31,7 @@ npm install
 ### Elasticsearch
 Install Elasticsearch from `https://www.elastic.co/downloads/elasticsearch` and follow the installation steps at the bottom of the page
 
-Install elasticsearch python client by following `https://elasticsearch-py.readthedocs.io/en/v7.12.0/` 
+Under `./indexing`, install elasticsearch python client by following `https://elasticsearch-py.readthedocs.io/en/v7.12.0/` 
 ```
 python -m pip install elasticsearch
 ```
