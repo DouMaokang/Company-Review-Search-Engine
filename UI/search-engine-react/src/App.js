@@ -296,7 +296,7 @@ function App() {
       <SearchBar search={request_search_result} />
       <p>Search by company</p>
       Search keywords: <input type="text" value={company_query} onChange={e => setCompanyQuery(e.target.value)} />
-      Company name: <input type="text" value={company} onChange={e => setCompanyCategory(e.target.value)} />
+      Company name: <input type="text" value={company} onChange={e => setCompany(e.target.value)} />
       <button onClick={e => reqeust_search_result_by_company(e)}>
         Go
       </button>
