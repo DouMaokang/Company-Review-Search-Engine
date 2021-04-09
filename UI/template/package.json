@@ -5,6 +5,10 @@
   "private": false,
   "main": "dist/index.js",
   "dependencies": {
+    "@devexpress/dx-react-chart": "^2.7.5",
+    "@devexpress/dx-react-chart-material-ui": "^2.7.5",
+    "@devexpress/dx-react-core": "^2.7.5",
+    "@devexpress/dx-react-grid": "^2.7.5",
     "@material-ui/core": "4.10.0",
     "@material-ui/icons": "4.9.1",
     "chart.js": "^2.9.4",
@@ -21,7 +25,8 @@
     "react-google-maps": "9.4.5",
     "react-router-dom": "5.2.0",
     "react-scripts": "3.4.1",
-    "react-swipeable-views": "0.13.9"
+    "react-swipeable-views": "0.13.9",
+    "react-wordcloud": "^1.2.7"
   },
   "scripts": {
     "start": "react-scripts start",

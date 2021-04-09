@@ -24,6 +24,55 @@ def preprocess(request):
             result = preprocess_text(request.data['string'])
             return Response(result, status=status.HTTP_200_OK)
 
+@api_view(['POST'])
+def feedback(request):
+    if request.method == 'POST':
+        like = request.data['like']
+        unlike = request.data['unlike']
+        like_query = []
+
+        query = request.GET['query']
+        company = request.query_params['company']
+        if query is not None and query != '':
+            processed_query = preprocess_text(request.query_params['query'])
+
+        for item in like:
+            like_query.append({
+                "_index": "indeed",
+                "_type": "_doc",
+                "_id": item
+            })
+        unlike_query = []
+        for item in unlike:
+            unlike_query.append({
+                "_index": "indeed",
+                "_type": "_doc",
+                "_id": item
+            })
+        body = {
+            "query": {
+                'bool': {
+                    'must': [
+                        {"match": { "company": company}}, 
+                        {"match": { "review_tokens": processed_query}},
+                    
+                    ],
+                    'should': {"more_like_this": {
+                                "fields": ["review_raw", "review_tokens"],
+                                "like": like_query,
+                                "unlike": unlike_query,
+                                "min_term_freq": 1,
+                                "min_doc_freq": 1,
+                                "include": True
+                            }
+                        }
+                    
+                }
+            }
+        }
+        response = es.search(index="indeed", body=body)
+    return Response(response, status=status.HTTP_200_OK)
+
 @api_view(['GET'])
 def wordcloud(request):
     if request.method == 'GET':

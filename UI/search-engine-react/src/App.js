@@ -129,7 +129,7 @@ function App() {
     }
   }
 
-  function render_pie_chart() {
+  function render_line_chart() {
     if (searchResults.length !== 0) {
       const result = searchResults.reduce((r, {_source}) => {
         let dateObj = new Date(_source.post_date);
@@ -196,7 +196,7 @@ function App() {
 
   useEffect(() => {
     getSemanticAnalysisData()
-    render_pie_chart()
+    render_line_chart()
     renderHistogram()
   }, [searchResults])
 

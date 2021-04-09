@@ -19,6 +19,7 @@ from api import views
 
 urlpatterns = [
     path('preprocess/', views.preprocess),
+    path('feedback/', views.feedback),
     path('wordcloud/', views.wordcloud),
     path('search/', views.search),
     path('search_by_company/', views.search_by_company),
