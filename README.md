@@ -23,7 +23,7 @@ pip install -r requirements.txt
 ```
 
 ### Frontend
-Under `./UI/search-engine-react`, type in the command prompt
+Under `./UI/template`, type in the command prompt
 ```
 npm install
 ```
@@ -65,7 +65,7 @@ python manage.py runserver
 ```
 
 ### Frontend
-Run the below command in `./UI/search-engine-react`
+Run the below command in `./UI/template`
 ```
 npm start
 ```
