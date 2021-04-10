@@ -72,14 +72,6 @@ function App() {
     setCompanyForStatus('')
   }
 
-  // function handleChangeCompany(e) {
-  //   setCompany(e.target.value)
-  // }
-
-  // function handleChangeLocation(e) {
-  //   setLocation(e.target.value)
-  // }
-
   function renderHistogram(){
     if (searchResults.length !== 0) {
       const result = searchResults.reduce((r, {_source}) => {

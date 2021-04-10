@@ -3,6 +3,8 @@ import React, {useState, useEffect} from "react";
 import ChartistGraph from "react-chartist";
 // React Wordclou
 import ReactWordcloud from 'react-wordcloud';
+import Container from '@material-ui/core/Container';
+
 // @material-ui/core
 import Icon from "@material-ui/core/Icon";
 // @material-ui/icons
@@ -131,6 +133,7 @@ export default function Main() {
   const [company_category, setCompanyCategory] = useState('');
   const [status, setStatus] = useState('Current Employee');
   const [company_for_status, setCompanyForStatus] = useState('');
+  const [company_for_wordcloud, setCompanyForWordcloud] = useState('');
   const [company_query, setCompanyQuery] = useState('')
   const [location_query, setLocationQuery] = useState('')
   const [company_category_query, setCompanyCategoryQuery] = useState('')
@@ -190,9 +193,8 @@ export default function Main() {
       setCompanyForStatus('')
   }
 
-  function request_wordcloud(e) {
+  function request_wordcloud() {
     setWords([])
-    e.preventDefault();
     if (company.length !== 0) {
       fetch(`http://localhost:8000/wordcloud/?company=${company}`, {
         method: 'GET'})
@@ -204,6 +206,7 @@ export default function Main() {
   }
 
   function reqeust_search_result_by_status(e) {
+    console.log("123")
     e.preventDefault();
     fetch(`http://localhost:8000/search_by_employment_status/?status=${status}&query=${searchText}&company=${company_for_status}`, {
     method: 'GET'})
@@ -256,7 +259,7 @@ export default function Main() {
         case "Location":
             request_search_result_by_location(e)
             break;
-        case "Company Status":
+        case "Employment Status":
             reqeust_search_result_by_status(e)
             break;
         default:
@@ -270,21 +273,11 @@ export default function Main() {
     }
   }
 
-  // function request_search_result(e, searchText) {
-  //   e.preventDefault();
-    
-  //   fetch(`http://localhost:8000/search/?query=${searchText}`, {
-  //     method: 'GET'})
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       setSearchResults(data.hits.hits)
-  //     })
-  // }
-
   useEffect(() => {
     getSemanticAnalysisData()
     render_line_chart()
     renderHistogram()
+    request_wordcloud()
   }, [searchResults])
 
   useEffect(() => {
@@ -320,6 +313,28 @@ export default function Main() {
       });
       setHistogramData(result_arr.slice(0, 5));
     }
+  }
+
+  function update_index(e) {
+    e.preventDefault();
+    setLoadText("Fetching...")
+    fetch(`http://localhost:8000/add_latest_data?from_date=${lastUpdate}`, {
+      method: 'GET'})
+      .then(response => response.json())
+      .then(data => {
+        setLoadText("Fetch Done!")
+        setLastUpdate()
+
+        fetch('http://localhost:8000/get_latest_date', {
+          method: 'GET'})
+          .then(response => response.json())
+          .then(data => setLastUpdate(data))
+
+        fetch('http://localhost:8000/get_total_reviews', {
+          method: 'GET'})
+          .then(response => response.json())
+          .then(data => setTotalReviews(data))
+      })
   }
 
   function getSemanticAnalysisData() {
@@ -406,20 +421,21 @@ export default function Main() {
     </div>)
   }
 
-  const [irrelevant, setIrrelevant] = useState("");
-
   function onMarkIrrelevant(unlike) {
     var like = []
     searchResults.slice(0, 5).map((item) => {
-      like.push(item._id)
+      if (item._id != unlike) {
+        like.push(item._id)
+      }
     })
     if (company != "") {
-      fetch(`http://localhost:8000/feedback/?company=${company}&query=${company_query}`, {
+      fetch(`http://localhost:8000/feedback/?company=${company}&query=${searchText}`, {
         method: 'POST',
-        body: {
+        body: JSON.stringify({
           "like": like,
           "unlike": unlike
-        }
+        }),
+        headers: { "Content-Type": "application/json" },
       })
           .then(response => response.json())
           .then(data => {
@@ -433,10 +449,27 @@ export default function Main() {
     <div>
       {/* App Bar */}
       <div className={classes.root}>
+        <div style={{marginBottom: "8px"}}>
+          <AppBar position="static">
+            <Toolbar style={{backgroundColor: "white", display: "flex", justifyContent: "space-between"}}>
+              <Typography variant="h6" style={{color: "black"}}>
+                Last Updated: {lastUpdate}
+              </Typography>
+              <Typography variant="h6" style={{color: "black"}}>
+                Total Reviews: {totalReviews}
+              </Typography>
+              <Button variant="contained" onClick={(e) => update_index(e)}>
+                Fetch Next 5 days Reviews
+              </Button>
+              {loadText}
+            </Toolbar>
+          </AppBar>
+        </div>
+      
             <AppBar position="static">
-                <Toolbar>
-                    <Typography variant="h6">
-                        Search By
+                <Toolbar style={{backgroundColor: "white", display: "flex", justifyContent: "space-between"}}>
+                    <Typography variant="h6" style={{color: "black"}}>
+                        Filter
                     </Typography>
                     <Select
                         labelId="demo-simple-select-label"
@@ -460,6 +493,7 @@ export default function Main() {
                     />}
                     {selectedItem === "Location" && <InputBase
                         placeholder="Location"
+                        style={{backgroundColor: "white"}}
                         classes={{
                             root: classes.inputRoot,
                             input: classes.inputInput,
@@ -494,14 +528,11 @@ export default function Main() {
                                 input: classes.inputInput,
                             }}
                             inputProps={{ 'aria-label': 'search' }}
-                            onChange={e => setCompany(e.target.value)}
+                            onChange={e => setCompanyForStatus(e.target.value)}
                         />
                     </div>
                     }
                     <div className={classes.search}>
-                        <div className={classes.searchIcon}>
-                            <SearchIcon />
-                        </div>
                         <InputBase
                             placeholder="Search…"
                             classes={{
@@ -517,745 +548,98 @@ export default function Main() {
             </AppBar>
         </div>
 
+      {searchResults.length == 0? null : 
       <GridContainer>
-        <GridItem xs={12}>
-        <Card>
-          <Box>
-          <TableContainer component={Paper}>
-            <Table className={classes.table} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell size="small">Review</TableCell>
-                  <TableCell size="small">Sentiment</TableCell>
-                  <TableCell size="small">Company</TableCell>
-                  <TableCell size="small">Location</TableCell>
-                  <TableCell size="small">Status</TableCell>
-                  <TableCell size="small">Category</TableCell>
-                  <TableCell size="small">Relevance</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-              {searchResults.slice(0, 10).map((row) => 
-                  <TableRow key={row._id}>
-                  <TableCell align="left">{row._source.review_raw}</TableCell>
-                  <TableCell align="left">{row._source.sentiment}</TableCell>
-                  <TableCell align="left">
-                    {row._source.company}
-                  </TableCell>
-                  <TableCell align="left">{row._source.location}</TableCell>
-                  <TableCell align="left">{row._source.job_title}</TableCell>
-                  <TableCell align="left">{row._source.category}</TableCell>
-                  <TableCell>
-                    <Button onClick={() => onMarkIrrelevant(row._id)}>
-                      Mark as irrelevant
-                    </Button>
-                  </TableCell>
-                </TableRow>)}
-              </TableBody>
-            </Table>
-          </TableContainer>
+      <GridItem xs={12}>
+        
+      <Card style={{marginTop: "8px"}}>
+        <Box>
+        <TableContainer component={Paper}>
+          <Table className={classes.table} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell size="small">Review</TableCell>
+                <TableCell size="small">Sentiment</TableCell>
+                <TableCell size="small">Company</TableCell>
+                <TableCell size="small">Location</TableCell>
+                <TableCell size="small">Status</TableCell>
+                <TableCell size="small">Category</TableCell>
+                <TableCell size="small">Relevance</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+            {searchResults.slice(0, 10).map((row) => 
+                <TableRow key={row._id}>
+                <TableCell align="left">{row._source.review_raw}</TableCell>
+                <TableCell align="left">{row._source.sentiment}</TableCell>
+                <TableCell align="left">
+                  {row._source.company}
+                </TableCell>
+                <TableCell align="left">{row._source.location}</TableCell>
+                <TableCell align="left">{row._source.job_title}</TableCell>
+                <TableCell align="left">{row._source.category}</TableCell>
+                <TableCell>
+                  <Button onClick={() => onMarkIrrelevant(row._id)}>
+                    Mark as irrelevant
+                  </Button>
+                </TableCell>
+              </TableRow>)}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-            </Box>
+          </Box>
+      </Card>
+      
+      </GridItem>
+      <GridItem xs={12} sm={12} md={6} >
+        <Card chart style={{marginTop: "16px"}}>
+            <CardHeader color="rose" plain={true}>Worldcloud</CardHeader>
+            <CardContent>
+              {/* <InputBase
+                  placeholder="Company"
+                  classes={{
+                      root: classes.inputRoot,
+                      input: classes.inputInput,
+                  }}
+                  inputProps={{ 'aria-label': 'search' }}
+                  onChange={e => setCompanyForWordcloud(e.target.value)}
+              />
+              <Button onClick={request_wordcloud}>
+                Get WordCloud
+              </Button> */}
+              {words.length !== 0 && render_wordcloud()}
+          </CardContent>
         </Card>
-        </GridItem>
-        <GridItem xs={12} sm={12} md={7} >
-          <Card chart>
-              <CardHeader color="rose" plain={true}>Worldcloud</CardHeader>
-              <CardContent>
-                <Button onClick={request_wordcloud}>
-                  Get WordCloud
-                </Button>
-                {words.length !== 0 && render_wordcloud()}
-            </CardContent>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={12} md={7} >
-          <Card chart>
-              <CardHeader color="rose" plain={true}>Top 5 Review Count</CardHeader>
-              <CardContent>
-                <Histogram histogramData={histogramData}/>
-            </CardContent>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={12} md={7} >
-          <Card chart>
-              <CardHeader color="rose" plain={true}>Sentiment Analysis</CardHeader>
-              <CardContent>
-                <PieChart pieChartData={pieChartData} />
-            </CardContent>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={12} md={7} >
-          <Card chart>
-              <CardHeader color="rose" plain={true}>Review Sentiment Trend</CardHeader>
-              <CardContent>
-                <LineChart lineChartData={lineChartData} />
-            </CardContent>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={12} md={5} >
-          <Sales />
-        </GridItem>
-        <GridItem xs={12} sm={12} md={6}>
-          <Card chart>
-            <CardHeader color="rose" plain={true}>
-              <ChartistGraph
-                  className="ct-chart"
-                  data={dailySalesChart.data}
-                  type="Line"
-                  options={dailySalesChart.options}
-                  listener={dailySalesChart.animation}
-              />
-            </CardHeader>
-            <CardBody>
-              <h4 className={classes.cardTitle}>Daily Sales</h4>
-              <p className={classes.cardCategory}>
-                <span className={classes.successText}>
-                  <ArrowUpward className={classes.upArrowCardCategory} /> 55%
-                </span>{" "}
-                increase in today sales.
-              </p>
-            </CardBody>
-            <CardFooter chart>
-              <div className={classes.stats}>
-                <AccessTime /> updated 4 minutes ago
-              </div>
-            </CardFooter>
-          </Card>
-          <Card chart>
-            <CardHeader color="success">
-              <ChartistGraph
-                  className="ct-chart"
-                  data={dailySalesChart.data}
-                  type="Line"
-                  options={dailySalesChart.options}
-                  listener={dailySalesChart.animation}
-              />
-            </CardHeader>
-            <CardBody>
-              <h4 className={classes.cardTitle}>Daily Sales</h4>
-              <p className={classes.cardCategory}>
-                <span className={classes.successText}>
-                  <ArrowUpward className={classes.upArrowCardCategory} /> 55%
-                </span>{" "}
-                increase in today sales.
-              </p>
-            </CardBody>
-            <CardFooter chart>
-              <div className={classes.stats}>
-                <AccessTime /> updated 4 minutes ago
-              </div>
-            </CardFooter>
-          </Card>
-          <Card chart>
-            <CardHeader color="success">
-              <ChartistGraph
-                  className="ct-chart"
-                  data={dailySalesChart.data}
-                  type="Line"
-                  options={dailySalesChart.options}
-                  listener={dailySalesChart.animation}
-              />
-            </CardHeader>
-            <CardBody>
-              <h4 className={classes.cardTitle}>Daily Sales</h4>
-              <p className={classes.cardCategory}>
-                <span className={classes.successText}>
-                  <ArrowUpward className={classes.upArrowCardCategory} /> 55%
-                </span>{" "}
-                increase in today sales.
-              </p>
-            </CardBody>
-            <CardFooter chart>
-              <div className={classes.stats}>
-                <AccessTime /> updated 4 minutes ago
-              </div>
-            </CardFooter>
-          </Card>
-        </GridItem>
+      </GridItem>
+      <GridItem xs={12} sm={12} md={6} >
+        <Card chart style={{marginTop: "16px"}}>
+            <CardHeader color="rose" plain={true}>Top 5 Review Count</CardHeader>
+            <CardContent>
+              <Histogram histogramData={histogramData}/>
+          </CardContent>
+        </Card>
+      </GridItem>
+      <GridItem xs={12} sm={12} md={6} >
+        <Card chart style={{marginTop: "16px"}}>
+            <CardHeader color="rose" plain={true}>Sentiment Analysis</CardHeader>
+            <CardContent>
+              <PieChart pieChartData={pieChartData} />
+          </CardContent>
+        </Card>
+      </GridItem>
+      <GridItem xs={12} sm={12} md={6} >
+        <Card chart style={{marginTop: "16px"}}>
+            <CardHeader color="rose" plain={true}>Review Sentiment Trend</CardHeader>
+            <CardContent>
+              <LineChart lineChartData={lineChartData} />
+          </CardContent>
+        </Card>
+      </GridItem>
+    </GridContainer>
 
-      </GridContainer>
-      <GridContainer>
-        <GridItem xs={12} sm={12} >
-          <Card>
-            <CardHeader color="warning">
-              <h4 className={classes.cardTitleWhite}>Employees Stats</h4>
-              <p className={classes.cardCategoryWhite}>
-                New employees on 15th September, 2016
-              </p>
-            </CardHeader>
-            <CardBody>
-              <Table
-                  tableHeaderColor="warning"
-                  tableHead={["ID", "Name", "Salary", "Country"]}
-                  tableData={[
-                    ["1", "Dakota Rice", "$36,738", "Niger"],
-                    ["2", "Minerva Hooper", "$23,789", "Curaçao"],
-                    ["3", "Sage Rodriguez", "$56,142", "Netherlands"],
-                    ["4", "Philip Chaney", "$38,735", "Korea, South"]
-                  ]}
-              />
-            </CardBody>
-          </Card>
-        </GridItem>
-      </GridContainer>
-      <GridContainer>
-        <GridItem xs={12} sm={6} md={3}>
-          <Card>
-            <CardHeader color="warning" stats icon>
-              <CardIcon color="warning">
-                <Icon>content_copy</Icon>
-              </CardIcon>
-              <p className={classes.cardCategory}>Used Space</p>
-              <h3 className={classes.cardTitle}>
-                49/50 <small>GB</small>
-              </h3>
-            </CardHeader>
-            <CardFooter stats>
-              <div className={classes.stats}>
-                <Danger>
-                  <Warning />
-                </Danger>
-                <a href="#pablo" onClick={e => e.preventDefault()}>
-                  Get more space
-                </a>
-              </div>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={6} md={3}>
-          <Card>
-            <CardHeader color="success" stats icon>
-              <CardIcon color="success">
-                <Store />
-              </CardIcon>
-              <p className={classes.cardCategory}>Revenue</p>
-              <h3 className={classes.cardTitle}>$34,245</h3>
-            </CardHeader>
-            <CardFooter stats>
-              <div className={classes.stats}>
-                <DateRange />
-                Last 24 Hours
-              </div>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={6} md={3}>
-          <Card>
-            <CardHeader color="danger" stats icon>
-              <CardIcon color="danger">
-                <Icon>info_outline</Icon>
-              </CardIcon>
-              <p className={classes.cardCategory}>Fixed Issues</p>
-              <h3 className={classes.cardTitle}>75</h3>
-            </CardHeader>
-            <CardFooter stats>
-              <div className={classes.stats}>
-                <LocalOffer />
-                Tracked from Github
-              </div>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={6} md={3}>
-          <Card>
-            <CardHeader color="info" stats icon>
-              <CardIcon color="info">
-                <Accessibility />
-              </CardIcon>
-              <p className={classes.cardCategory}>Followers</p>
-              <h3 className={classes.cardTitle}>+245</h3>
-            </CardHeader>
-            <CardFooter stats>
-              <div className={classes.stats}>
-                <Update />
-                Just Updated
-              </div>
-            </CardFooter>
-          </Card>
-        </GridItem>
-      </GridContainer>
-      <GridContainer>
-        <GridItem xs={12} sm={12} md={4}>
-          <Card chart>
-            <CardHeader color="success">
-              <ChartistGraph
-                className="ct-chart"
-                data={dailySalesChart.data}
-                type="Line"
-                options={dailySalesChart.options}
-                listener={dailySalesChart.animation}
-              />
-            </CardHeader>
-            <CardBody>
-              <h4 className={classes.cardTitle}>Daily Sales</h4>
-              <p className={classes.cardCategory}>
-                <span className={classes.successText}>
-                  <ArrowUpward className={classes.upArrowCardCategory} /> 55%
-                </span>{" "}
-                increase in today sales.
-              </p>
-            </CardBody>
-            <CardFooter chart>
-              <div className={classes.stats}>
-                <AccessTime /> updated 4 minutes ago
-              </div>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={12} md={4}>
-          <Card chart>
-            <CardHeader color="warning">
-              <ChartistGraph
-                className="ct-chart"
-                data={emailsSubscriptionChart.data}
-                type="Bar"
-                options={emailsSubscriptionChart.options}
-                responsiveOptions={emailsSubscriptionChart.responsiveOptions}
-                listener={emailsSubscriptionChart.animation}
-              />
-            </CardHeader>
-            <CardBody>
-              <h4 className={classes.cardTitle}>Email Subscriptions</h4>
-              <p className={classes.cardCategory}>Last Campaign Performance</p>
-            </CardBody>
-            <CardFooter chart>
-              <div className={classes.stats}>
-                <AccessTime /> campaign sent 2 days ago
-              </div>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={12} md={4}>
-          <Card chart>
-            <CardHeader color="danger">
-              <ChartistGraph
-                className="ct-chart"
-                data={completedTasksChart.data}
-                type="Line"
-                options={completedTasksChart.options}
-                listener={completedTasksChart.animation}
-              />
-            </CardHeader>
-            <CardBody>
-              <h4 className={classes.cardTitle}>Completed Tasks</h4>
-              <p className={classes.cardCategory}>Last Campaign Performance</p>
-            </CardBody>
-            <CardFooter chart>
-              <div className={classes.stats}>
-                <AccessTime /> campaign sent 2 days ago
-              </div>
-            </CardFooter>
-          </Card>
-        </GridItem>
-      </GridContainer>
-    </div>
+
+}
+      </div>
   );
 }
-
-
-// Disgard
-// const useStyles1 = makeStyles((theme) => ({
-//     root: {
-//         flexGrow: 1,
-//     },
-//     menuButton: {
-//         marginRight: theme.spacing(2),
-//     },
-//     title: {
-//         flexGrow: 1,
-//         display: 'none',
-//         [theme.breakpoints.up('sm')]: {
-//             display: 'block',
-//         },
-//     },
-//     search: {
-//         position: 'relative',
-//         borderRadius: theme.shape.borderRadius,
-//         backgroundColor: fade(theme.palette.common.white, 0.15),
-//         '&:hover': {
-//             backgroundColor: fade(theme.palette.common.white, 0.25),
-//         },
-//         width: '100%',
-//         [theme.breakpoints.up('sm')]: {
-//             marginLeft: theme.spacing(1),
-//             width: 'auto',
-//         },
-//     },
-//     searchIcon: {
-//         padding: theme.spacing(0, 2),
-//         height: '100%',
-//         position: 'absolute',
-//         pointerEvents: 'none',
-//         display: 'flex',
-//         alignItems: 'center',
-//         justifyContent: 'center',
-//     },
-//     inputRoot: {
-//         color: 'inherit',
-//     },
-//     inputInput: {
-//         padding: theme.spacing(1, 1, 1, 0),
-//         // vertical padding + font size from searchIcon
-//         paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-//         transition: theme.transitions.create('width'),
-//         width: '100%',
-//         [theme.breakpoints.up('sm')]: {
-//             width: '12ch',
-//             '&:focus': {
-//                 width: '20ch',
-//             },
-//         },
-//     },
-// }));
-
-// function SearchAppBar({search, setCompany, setCompanyCategory}) {
-//     // const [selectedItem, setSelectedItem] = useState('');
-//     // const [searchText, setSearchText] = useState('');
-//     // const [words, setWords] = useState([]);
-//     // const [location, setLocation] = useState('');
-//     // const [company, setCompany] = useState('');
-//     // const [company_category, setCompanyCategory] = useState('');
-//     // const [status, setStatus] = useState('Current Employee');
-//     // const [company_for_status, setCompanyForStatus] = useState('');
-//     // const [company_query, setCompanyQuery] = useState('')
-//     // const [location_query, setLocationQuery] = useState('')
-//     // const [company_category_query, setCompanyCategoryQuery] = useState('')
-//     // const [status_query, setStatusQuery] = useState('')
-//     // const [lastUpdate, setLastUpdate] = useState('')
-//     // const [totalReviews, setTotalReviews] = useState(0)
-//     // const [loadText, setLoadText] = useState('')
-//     // const [searchResults, setSearchResults] = useState([])
-//     // const [histogramData, setHistogramData] = useState([])
-//     // const [pieChartData, setPieChartData] = useState({
-//     //     labels: [
-//     //         'Positive',
-//     //         'Negative',
-//     //         'Neutral'
-//     //     ],
-//     //     datasets: [
-//     //         {
-//     //         data: [0, 0, 0],
-//     //         backgroundColor: [
-//     //             'rgba(255, 99, 132, 0.2)',
-//     //             'rgba(54, 162, 235, 0.2)',
-//     //             'rgba(255, 206, 86, 0.2)',
-//     //         ],
-//     //         borderColor: [
-//     //             'rgba(255, 99, 132, 1)',
-//     //             'rgba(54, 162, 235, 1)',
-//     //             'rgba(255, 206, 86, 1)',
-//     //         ],
-//     //         borderWidth: 1,
-//     //         },
-//     //     ],
-//     // });
-//     // const [lineChartData, setLineChartData] = useState({
-//     //     datasets: [
-//     //         {
-//     //         label: 'review trend',
-//     //         data: [],
-//     //         fill: false,
-//     //         backgroundColor: 'rgb(255, 99, 132)',
-//     //         borderColor: 'rgba(255, 99, 132, 0.2)',
-//     //         },
-//     //     ],
-//     // })
-
-//     // const options = {
-//     //     rotations: 0,
-//     //     rotationAngles: [0, 0],
-//     // };
-
-//     // function clear_query(e) {
-//     //     setCompany('')
-//     //     setLocation('')
-//     //     setCompanyCategory('')
-//     //     setCompanyQuery('')
-//     //     setLocationQuery('')
-//     //     setCompanyCategory('')
-//     //     setCompanyForStatus('')
-//     // }
-//     const classes = useStyles1();
-
-//     // useEffect(() => {
-//     //   getSemanticAnalysisData()
-//     //   render_line_chart()
-//     //   renderHistogram()
-//     // }, [searchResults])
-
-//     // useEffect(() => {
-//     //   fetch('http://localhost:8000/get_latest_date', {
-//     //     method: 'GET'})
-//     //     .then(response => response.json())
-//     //     .then(data => setLastUpdate(data))
-  
-//     //   fetch('http://localhost:8000/get_total_reviews', {
-//     //     method: 'GET'})
-//     //     .then(response => response.json())
-//     //     .then(data => setTotalReviews(data))
-//     // }, [])
-
-//     // function renderHistogram(){
-//     //   if (searchResults.length !== 0) {
-//     //     const result = searchResults.reduce((r, {_source}) => {
-//     //       let employer = _source.company;
-//     //       if(!r[employer]) {
-//     //         r[employer] = {employer,review_count: 1}
-//     //       }
-//     //       else{
-//     //         r[employer].review_count++;
-//     //       }
-//     //       return r;
-  
-//     //     }, {})
-//     //     let result_arr = Object.keys(result).map(e => {
-//     //       return result[e];
-//     //     });
-//     //     result_arr.sort(function (a, b) {
-//     //       return b.review_count - a.review_count;
-//     //     });
-//     //     setHistogramData(result_arr.slice(0, 5));
-//     //   }
-//     // }
-  
-//     // function getSemanticAnalysisData() {
-//     //   if (searchResults.length !== 0) {
-//     //     var counts = {'Positive': 0, 'Negative': 0, 'Neutral': 0};
-//     //     let positiveness = searchResults.map(item => item._source.sentiment)
-        
-//     //     positiveness.forEach(function(x) { counts[x] = counts[x]+1 });
-//     //     console.log(counts)
-//     //     setPieChartData({...pieChartData, datasets: [
-//     //       {
-//     //         data: [counts['Positive'], counts['Negative'], counts['Neutral']],
-//     //         backgroundColor: [
-//     //           'rgba(255, 99, 132, 0.2)',
-//     //           'rgba(54, 162, 235, 0.2)',
-//     //           'rgba(255, 206, 86, 0.2)',
-//     //         ],
-//     //         borderColor: [
-//     //           'rgba(255, 99, 132, 1)',
-//     //           'rgba(54, 162, 235, 1)',
-//     //           'rgba(255, 206, 86, 1)',
-//     //         ],
-//     //         borderWidth: 1,
-//     //       },
-//     //     ]})
-//     //   }
-//     // }
-  
-//     // function render_line_chart() {
-//     //   if (searchResults.length !== 0) {
-//     //     const result = searchResults.reduce((r, {_source}) => {
-//     //       let dateObj = new Date(_source.post_date);
-//     //       let monthyear = dateObj.toLocaleString("fr-ca", { month: "numeric", year: 'numeric' });
-//     //       if(!r[monthyear] && _source.sentiment === "Positive") {
-//     //         r[monthyear] = {monthyear, positive_count: 1, negative_count: 0, neutral_count: 0}
-//     //       }
-//     //       else if (!r[monthyear] && _source.sentiment === "Negative") {
-//     //         r[monthyear] = {monthyear, positive_count: 0, negative_count: 1, neutral_count: 0}
-//     //       }
-//     //       else if (!r[monthyear] && _source.sentiment === "Neutral") {
-//     //         r[monthyear] = {monthyear, positive_count: 0, negative_count: 0, neutral_count: 1}
-//     //       }
-//     //       else if (_source.sentiment === "Positive") r[monthyear].positive_count++;
-//     //       else if (_source.sentiment === "Negative") r[monthyear].negative_count++;
-//     //       else if (_source.sentiment === "Neutral") r[monthyear].neutral_count++;
-//     //       return r;
-//     //     }, {})
-        
-//     //     let result_arr = Object.keys(result).map(e => {
-//     //       return result[e];
-//     //     });
-//     //     result_arr.sort(function (a, b) {
-//     //       return a.monthyear.localeCompare(b.monthyear);
-//     //     });
-  
-//     //     setLineChartData({...lineChartData, datasets: [
-//     //       {
-//     //         label: 'positive count',
-//     //         data: result_arr.map(o => ({ x: o.monthyear, y: o.positive_count })),
-//     //         fill: true,
-//     //         backgroundColor: "rgba(75,192,192,0.2)",
-//     //         borderColor: "rgba(75,192,192,1)"
-//     //       },
-//     //       {
-//     //         label: 'negative count',
-//     //         data: result_arr.map(o => ({ x: o.monthyear, y: o.negative_count })),
-//     //         fill: false,
-//     //         backgroundColor: 'rgb(255, 99, 132)',
-//     //         borderColor: "#742774",
-//     //       },
-//     //       {
-//     //         label: 'neutral count',
-//     //         data: result_arr.map(o => ({ x: o.monthyear, y: o.neutral_count })),
-//     //         fill: false,
-//     //         borderColor: 'rgb(255, 99, 132)',
-//     //       }
-//     //     ]})
-//     //   }
-//     // }
-
-//     // function request_search_result(e, searchText) {
-//     //     e.preventDefault();
-
-//     //     switch(selectedItem) {
-//     //         case "Company": 
-//     //             request_search_result_by_company(e)
-//     //             break;
-//     //         case "Company Category":
-//     //             request_search_result_by_company_category(e)
-//     //             break;
-//     //         case "Location":
-//     //             request_search_result_by_location(e)
-//     //             break;
-//     //         case "Company Status":
-//     //             reqeust_search_result_by_status(e)
-//     //             break;
-//     //         default:
-//     //             fetch(`http://localhost:8000/search/?query=${searchText}`, {
-//     //                 method: 'GET'})
-//     //                 .then(response => response.json())
-//     //                 .then(data => {
-//     //                     setSearchResults(data.hits.hits)
-//     //                 })
-
-//     //     }
-//     // }
-
-//     // function reqeust_search_result_by_status(e) {
-//     //     e.preventDefault();
-//     //     fetch(`http://localhost:8000/search_by_employment_status/?status=${status}&query=${searchText}&company=${company_for_status}`, {
-//     //     method: 'GET'})
-//     //     .then(response => response.json())
-//     //     .then(data => {
-//     //       setSearchResults(data.hits.hits)
-//     //     })
-//     // }
-
-//     // function request_search_result_by_location(e) {
-//     //     e.preventDefault();
-//     //     fetch(`http://localhost:8000/search_by_location/?location=${location}&query=${searchText}`, {
-//     //     method: 'GET'})
-//     //     .then(response => response.json())
-//     //     .then(data => {
-//     //       setSearchResults(data.hits.hits)
-//     //     })
-//     // }
-
-//     // function request_search_result_by_company(e) {
-//     //     e.preventDefault();
-//     //     fetch(`http://localhost:8000/search_by_company/?company=${company}&query=${searchText}`, {
-//     //     method: 'GET'})
-//     //     .then(response => response.json())
-//     //     .then(data => {
-//     //       setSearchResults(data.hits.hits)
-//     //     })
-//     //   }
-    
-//     //   function request_search_result_by_company_category(e) {
-//     //     e.preventDefault();
-//     //     fetch(`http://localhost:8000/search_by_company_category/?company_category=${company_category}&query=${searchText}`, {
-//     //     method: 'GET'})
-//     //     .then(response => response.json())
-//     //     .then(data => {
-//     //       setSearchResults(data.hits.hits)
-//     //     })
-//     //   }
-
-//     return (
-//         <div className={classes.root}>
-//             <AppBar position="static">
-//                 <Toolbar>
-//                     <IconButton
-//                         edge="start"
-//                         className={classes.menuButton}
-//                         color="inherit"
-//                         aria-label="open drawer"
-//                     >
-//                         <MenuIcon />
-//                     </IconButton>
-//                     <Typography className={classes.title} variant="h6" noWrap>
-//                         Material-UI
-//                     </Typography>
-//                     <Typography variant="h6">
-//                         Search By
-//                     </Typography>
-//                     <Select
-//                         labelId="demo-simple-select-label"
-//                         id="demo-simple-select"
-//                         value={selectedItem}
-//                         onChange={e => setSelectedItem(e.target.value)}
-//                         >
-//                         <MenuItem value={"Company"}>Company</MenuItem>
-//                         <MenuItem value={"Company Category"}>Company Category</MenuItem>
-//                         <MenuItem value={"Location"}>Location</MenuItem>
-//                         <MenuItem value={"Employment Status"}>Employment Status</MenuItem>
-//                     </Select>
-//                     {selectedItem === "Location" && <InputBase
-//                         placeholder="Location"
-//                         classes={{
-//                             root: classes.inputRoot,
-//                             input: classes.inputInput,
-//                         }}
-//                         inputProps={{ 'aria-label': 'search' }}
-//                         onChange={e => setLocation(e.target.value)}
-//                     />}
-//                     {selectedItem === "Company Category" && <InputBase
-//                         placeholder="Company Category"
-//                         classes={{
-//                             root: classes.inputRoot,
-//                             input: classes.inputInput,
-//                         }}
-//                         inputProps={{ 'aria-label': 'search' }}
-//                         onChange={e => setCompanyCategory(e.target.value)}
-//                     />}
-//                     {selectedItem === "Employment Status" &&
-//                     <div>
-//                         <Select
-//                             labelId="employment_status"
-//                             id="employment_status"
-//                             value={status}
-//                             onChange={e => setStatus(e.target.value)}
-//                             >
-//                             <MenuItem value={"Current Employee"}>Current Employee</MenuItem>
-//                             <MenuItem value={"Former Employee"}>Former Employee</MenuItem>
-//                         </Select>
-//                         <InputBase
-//                             placeholder="Company Category"
-//                             classes={{
-//                                 root: classes.inputRoot,
-//                                 input: classes.inputInput,
-//                             }}
-//                             inputProps={{ 'aria-label': 'search' }}
-//                             onChange={e => setCompanyCategory(e.target.value)}
-//                         />
-//                     </div>
-//                     }
-//                     {/* <select id="status" name="status" value={status} onChange={e => {console.log(e.target.value); setStatus(e.target.value)}}>
-//                         <option value="Company">Company</option>
-//                         <option value="Company Category">Company Category</option>
-//                         <option value="Location">Location</option>
-//                         <option value="Employment Status">Employment Status</option>
-//                     </select> */}
-//                     <div className={classes.search}>
-//                         <div className={classes.searchIcon}>
-//                             <SearchIcon />
-//                         </div>
-//                         <InputBase
-//                             placeholder="Search…"
-//                             classes={{
-//                                 root: classes.inputRoot,
-//                                 input: classes.inputInput,
-//                             }}
-//                             inputProps={{ 'aria-label': 'search' }}
-//                             onChange={e => setSearchText(e.target.value)}
-//                         />
-//                     </div>
-//                     <Button variant="contained" onClick={e => request_search_result(e, searchText)}>Go</Button>
-//                 </Toolbar>
-//             </AppBar>
-//         </div>
-//     );
-// }
