@@ -12,7 +12,7 @@ In the root folder `./NTU-CZ4034`, create and activate a virtual environment
 ```
 python3 -m venv env
 ```
-Then, type the below command to activate virtual env
+Then, type the below command to activate virtual env\
 For Mac/Linux
 ```
 source env/bin/activate
