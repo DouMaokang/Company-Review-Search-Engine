@@ -45,7 +45,7 @@ Next, we are going to create an index "indeed" and index some documents.\
 \
 Under `./indexing`, run `python3 indexing.py` (command may vary based on OS).\
 \
-The script will start indexing documents before Aug 9 2020. It takes about 15mins - 30mins.\
+The script will start indexing documents before Aug 9 2020. The whole process takes about 15mins - 30mins.\
 \
 When you see the text `done done done!` in the comman prompt, the indexing is finished!\
 \
