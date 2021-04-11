@@ -22,7 +22,7 @@ pip install -r requirements.txt
 ```
 
 ### Backend
-Under `./Backend`, type in the command prompt
+No action needs to be taken
 
 
 ### Frontend
