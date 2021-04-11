@@ -1,7 +1,7 @@
 # NTU-CZ4034
 This repo contains the group project/assignment of CZ4034 - Information Retrieval
 
-# Things that needs to be installed
+# Things to be installed
 1. Elasticsearch
 2. Node.js
 3. Python3
