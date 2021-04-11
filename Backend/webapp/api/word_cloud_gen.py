@@ -14,7 +14,7 @@ def generate_wordcloud(company):
     df['company'] = df.apply(lambda row: row.URL.split('/')[-2], axis=1)
 
     for i, row in df.iterrows():
-        if row['company'] == company:
+        if row['company'].lower() == company.lower():
             val = str(row['review'])
             tokens = val.split()
             for i in range(len(tokens)):

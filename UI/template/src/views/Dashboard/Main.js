@@ -221,15 +221,16 @@ export default function Main() {
                 .then(data => {
                     setSearchResults(data.hits.hits)
                 })
-
     }
   }
 
   useEffect(() => {
+    setWords([])
     getSemanticAnalysisData()
     render_line_chart()
     renderHistogram()
-    request_wordcloud()
+    if (selectedItem === "Company")
+      request_wordcloud()
   }, [searchResults])
 
   useEffect(() => {
@@ -284,11 +285,6 @@ export default function Main() {
           method: 'GET'})
           .then(response => response.json())
           .then(data => setLastUpdate(data))
-
-        // fetch('http://localhost:8000/get_total_reviews', {
-        //   method: 'GET'})
-        //   .then(response => response.json())
-        //   .then(data => setTotalReviews(data))
       })
   }
 
@@ -550,18 +546,6 @@ export default function Main() {
         <Card chart style={{marginTop: "16px"}}>
             <CardHeader color="rose" plain={true}>Worldcloud</CardHeader>
             <CardContent>
-              {/* <InputBase
-                  placeholder="Company"
-                  classes={{
-                      root: classes.inputRoot,
-                      input: classes.inputInput,
-                  }}
-                  inputProps={{ 'aria-label': 'search' }}
-                  onChange={e => setCompanyForWordcloud(e.target.value)}
-              />
-              <Button onClick={request_wordcloud}>
-                Get WordCloud
-              </Button> */}
               {words.length !== 0 && render_wordcloud()}
           </CardContent>
         </Card>
