@@ -33,20 +33,17 @@ npm install --force
 ```
 
 ### Elasticsearch
-Install Elasticsearch from `https://www.elastic.co/downloads/elasticsearch` and follow the installation steps at the bottom of the page
+1. Install and Run Elasticsearch 
+From `https://www.elastic.co/downloads/elasticsearch` and follow the installation and run steps at the bottom of the page
 
-Under `./indexing`, install elasticsearch python client by following `https://elasticsearch-py.readthedocs.io/en/v7.12.0/` 
-```
-python -m pip install elasticsearch
-```
-
+2. Indexing
 Next, we are going to create an index "indeed" and index some documents
 
 Under `./indexing`, run `python3 indexing.py` (command may vary based on your OS)
 
-The script will start indexing documents. It takes about 15mins - 30mins.
+The script will start indexing documents before Aug 9 2020. It takes about 15mins - 30mins.
 
-When you see the text `done done done!` that means indexing has finished. 
+When you see the text `done done done!` in the comman prompt, the indexing is finished!. 
 
 You may checked the total number of indexed documents by calling the API `http://localhost:9200/indeed/_stats` in Postman (Before calling the API, ensure that Elasticsearch server is up and running on your machine)
 
