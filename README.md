@@ -47,9 +47,9 @@ Under `./indexing`, run `python3 indexing.py` (command may vary based on OS).\
 \
 The script will start indexing documents before Aug 9 2020. The whole process takes about 15mins - 30mins.\
 \
-When you see the text `done done done!` in the comman prompt, the indexing is finished!\
+When you see the text `done done done!` in the comman prompt, the indexing is done!\
 \
-You may checked the total number of indexed documents by calling the API `http://localhost:9200/indeed/_stats` in Postman (Before calling the API, ensure that Elasticsearch server is up and running on your machine)
+You may check the total number of indexed documents by calling the API `http://localhost:9200/indeed/_stats` in Postman (Before calling the API, ensure that Elasticsearch server is up and running on your machine)
 
 # Run the application
 
