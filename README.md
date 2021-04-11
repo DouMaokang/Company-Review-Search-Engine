@@ -3,9 +3,8 @@ This repo contains the group project/assignment of CZ4034 - Information Retrieva
 
 # Things that needs to be installed
 1. Elasticsearch
-2. Elasticsearch python client
-3. Node.js
-4. Python3
+2. Node.js
+3. Python3
 
 # Application Setup
 ### Virtual Environment
