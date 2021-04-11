@@ -8,7 +8,7 @@ This repo contains the group project/assignment of CZ4034 - Information Retrieva
 
 # Application Setup
 ### Virtual Environment
-In the root folder `./NTU-CZ4034`, create and activate an virtual environment
+In the root folder `./NTU-CZ4034`, create and activate a virtual environment
 ```
 python3 -m venv env
 ```
