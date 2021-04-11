@@ -135,7 +135,6 @@ def add_docs_in_next_day(request):
                 review_json["post_date"] = csv_date
                 review_json["location"] = row['place'][1:]
                 review_json["job_title"] = row['job']
-                # review_json["timestamp"] = datetime.datetime.now()
                 review_json["sentiment"] = row['sentiment']
 
                 es.index(index='indeed', id=row['id'], body=review_json)
@@ -183,6 +182,6 @@ def search_by_employment_status(request):
         company = request.GET['company']
         employment_status = request.query_params['status']
         processed_query = preprocess_text(request.query_params['query'])
-        body = {"query": {"bool": {"must": [{"bool": {"must": [{"query_string": {"query": "*{}*".format(employment_status), "fields": ["job_title"]}}, {"match": {"review_tokens": processed_query}}, {"match": {"company": company}}]}}]}}}   
+        body = {'size': 1000, "query": {"bool": {"must": [{"bool": {"must": [{"query_string": {"query": "*{}*".format(employment_status), "fields": ["job_title"]}}, {"match": {"review_tokens": processed_query}}, {"match": {"company": company}}]}}]}}}   
         response = es.search(index="indeed", body=body)
     return Response(response, status=status.HTTP_200_OK)
