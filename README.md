@@ -3,8 +3,8 @@ This repo contains the group project/assignment of CZ4034 - Information Retrieva
 
 # Things to be installed
 1. Elasticsearch
-2. Node.js
-3. Python3
+2. Node.js v15.11.0 (install via `https://nodejs.org/en/download/`)
+3. Python 3.9.1
 
 # Application Setup
 ### Virtual Environment
@@ -12,7 +12,8 @@ In the root folder `./NTU-CZ4034`, create and activate a virtual environment
 ```
 python3 -m venv env
 ```
-Then, type the below command to activate virtual env
+Then, type the below command to activate virtual env\
+For Mac/Linux
 ```
 source env/bin/activate
 ```
@@ -37,17 +38,20 @@ npm install --force
 From `https://www.elastic.co/downloads/elasticsearch` and follow the installation and run steps at the bottom of the page
 
 2. Indexing
-Next, we are going to create an index "indeed" and index some documents
-
-Under `./indexing`, run `python3 indexing.py` (command may vary based on your OS)
-
-The script will start indexing documents before Aug 9 2020. It takes about 15mins - 30mins.
-
-When you see the text `done done done!` in the comman prompt, the indexing is finished!. 
-
+Next, we are going to create an index "indeed" and index some documents.\
+\
+Under `./indexing`, run `python3 indexing.py` (command may vary based on OS).\
+\
+The script will start indexing documents before Aug 9 2020. It takes about 15mins - 30mins.\
+\
+When you see the text `done done done!` in the comman prompt, the indexing is finished!\
+\
 You may checked the total number of indexed documents by calling the API `http://localhost:9200/indeed/_stats` in Postman (Before calling the API, ensure that Elasticsearch server is up and running on your machine)
 
 # Run the application
+
+Elasticserach, backend and frontend must be all up and running to make the application work
+
 ### Elasticsearch
 Mac/Linux
 ```
