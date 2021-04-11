@@ -3,10 +3,13 @@ This repo contains the group project/assignment of CZ4034 - Information Retrieva
 
 # Things to be installed
 1. Elasticsearch
-2. Node.js v15.11.0 (install via `https://nodejs.org/en/download/`)
+2. Node.js
 3. Python 3.9.1
 
 # Application Setup
+### Node.js v15.11.0
+install via `https://nodejs.org/en/download/`
+
 ### Virtual Environment
 In the root folder `./NTU-CZ4034`, create and activate a virtual environment
 ```
