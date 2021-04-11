@@ -20,6 +20,7 @@ Install Python dependencies
 ```
 pip install -r requirements.txt
 ```
+All operations below needs to be done in this virtual environment
 
 ### Backend
 No action needs to be taken
