@@ -3,10 +3,13 @@ This repo contains the group project/assignment of CZ4034 - Information Retrieva
 
 # Things to be installed
 1. Elasticsearch
-2. Node.js v15.11.0 (install via `https://nodejs.org/en/download/`)
+2. Node.js
 3. Python 3.9.1
 
 # Application Setup
+### Node.js v15.11.0
+install via `https://nodejs.org/en/download/`
+
 ### Virtual Environment
 In the root folder `./NTU-CZ4034`, create and activate a virtual environment
 ```
@@ -34,19 +37,19 @@ npm install --force
 ```
 
 ### Elasticsearch
-1. Install and Run Elasticsearch 
+1. Install and Run Elasticsearch\
 From `https://www.elastic.co/downloads/elasticsearch` and follow the installation and run steps at the bottom of the page
 
-2. Indexing
+2. Indexing\
 Next, we are going to create an index "indeed" and index some documents.\
 \
-Under `./indexing`, run `python3 indexing.py` (command may vary based on OS).\
+Under `./indexing`, run `python indexing.py`.\
 \
-The script will start indexing documents before Aug 9 2020. It takes about 15mins - 30mins.\
+The script will start indexing documents before Aug 9 2020. The whole process takes about 15mins - 30mins.\
 \
-When you see the text `done done done!` in the comman prompt, the indexing is finished!\
+When you see the text `done done done!` in the comman prompt, the indexing is done!\
 \
-You may checked the total number of indexed documents by calling the API `http://localhost:9200/indeed/_stats` in Postman (Before calling the API, ensure that Elasticsearch server is up and running on your machine)
+You may check the total number of indexed documents by calling the API `http://localhost:9200/indeed/_stats` in Postman (Before calling the API, ensure that Elasticsearch server is up and running on your machine)
 
 # Run the application
 
