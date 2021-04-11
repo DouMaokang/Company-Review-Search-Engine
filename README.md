@@ -43,7 +43,7 @@ From `https://www.elastic.co/downloads/elasticsearch` and follow the installatio
 2. Indexing\
 Next, we are going to create an index "indeed" and index some documents.\
 \
-Under `./indexing`, run `python3 indexing.py` (command may vary based on OS).\
+Under `./indexing`, run `python indexing.py`.\
 \
 The script will start indexing documents before Aug 9 2020. The whole process takes about 15mins - 30mins.\
 \
