@@ -25,7 +25,7 @@ pip install -r requirements.txt
 ### Frontend
 Under `./UI/template`, type in the command prompt
 ```
-npm install
+npm install --force
 ```
 
 ### Elasticsearch
