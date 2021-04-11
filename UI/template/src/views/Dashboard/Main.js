@@ -3,19 +3,6 @@ import React, {useState, useEffect} from "react";
 import ChartistGraph from "react-chartist";
 // React Wordclou
 import ReactWordcloud from 'react-wordcloud';
-import Container from '@material-ui/core/Container';
-
-// @material-ui/core
-import Icon from "@material-ui/core/Icon";
-// @material-ui/icons
-import Store from "@material-ui/icons/Store";
-import Warning from "@material-ui/icons/Warning";
-import DateRange from "@material-ui/icons/DateRange";
-import LocalOffer from "@material-ui/icons/LocalOffer";
-import Update from "@material-ui/icons/Update";
-import ArrowUpward from "@material-ui/icons/ArrowUpward";
-import AccessTime from "@material-ui/icons/AccessTime";
-import Accessibility from "@material-ui/icons/Accessibility";
 // core components
 import GridItem from "components/Grid/GridItem.js";
 import GridContainer from "components/Grid/GridContainer.js";
@@ -23,43 +10,24 @@ import GridContainer from "components/Grid/GridContainer.js";
 import Table from "@material-ui/core/Table";
 import TableContainer from "@material-ui/core/TableContainer";
 import Paper from "@material-ui/core/Paper";
-import Danger from "components/Typography/Danger.js";
 import CardHeader from "components/Card/CardHeader.js";
-import CardIcon from "components/Card/CardIcon.js";
-import CardBody from "components/Card/CardBody.js";
-import CardFooter from "components/Card/CardFooter.js";
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import InputBase from '@material-ui/core/InputBase';
 import { fade, makeStyles } from '@material-ui/core/styles';
-import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
 import Histogram from '../Components/Histogram'
 import PieChart from '../Components/PieChart'
 import LineChart from '../Components/LineChart'
 
-import {
-  dailySalesChart,
-  emailsSubscriptionChart,
-  completedTasksChart
-} from "variables/charts.js";
-
 import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js";
-import LatestProducts from "./LatestProducts";
-import Sales from "./Sales";
 import { CardContent } from "@material-ui/core";
-import clsx from 'clsx';
-import { v4 as uuid } from 'uuid';
-import PropTypes from 'prop-types';
 import {
   Box,
   Button,
   Card,
-  Chip,
   TableBody,
   TableCell,
   TableHead,
@@ -133,14 +101,8 @@ export default function Main() {
   const [company_category, setCompanyCategory] = useState('');
   const [status, setStatus] = useState('Current Employee');
   const [company_for_status, setCompanyForStatus] = useState('');
-  const [company_for_wordcloud, setCompanyForWordcloud] = useState('');
-  const [company_query, setCompanyQuery] = useState('')
-  const [location_query, setLocationQuery] = useState('')
-  const [company_category_query, setCompanyCategoryQuery] = useState('')
-  const [status_query, setStatusQuery] = useState('')
   const [lastUpdate, setLastUpdate] = useState('')
   const [totalReviews, setTotalReviews] = useState(0)
-  const [loadText, setLoadText] = useState('')
   const [searchResults, setSearchResults] = useState([])
   const [histogramData, setHistogramData] = useState([])
   const [pieChartData, setPieChartData] = useState({
@@ -182,16 +144,6 @@ export default function Main() {
       rotations: 0,
       rotationAngles: [0, 0],
   };
-
-  function clear_query(e) {
-      setCompany('')
-      setLocation('')
-      setCompanyCategory('')
-      setCompanyQuery('')
-      setLocationQuery('')
-      setCompanyCategory('')
-      setCompanyForStatus('')
-  }
 
   function request_wordcloud() {
     setWords([])
@@ -292,6 +244,13 @@ export default function Main() {
       .then(data => setTotalReviews(data))
   }, [])
 
+  useEffect(() => {
+    fetch('http://localhost:8000/get_total_reviews', {
+      method: 'GET'})
+      .then(response => response.json())
+      .then(data => setTotalReviews(data))
+  }, [lastUpdate])
+
   function renderHistogram(){
     if (searchResults.length !== 0) {
       const result = searchResults.reduce((r, {_source}) => {
@@ -317,23 +276,19 @@ export default function Main() {
 
   function update_index(e) {
     e.preventDefault();
-    setLoadText("Fetching...")
     fetch(`http://localhost:8000/add_latest_data?from_date=${lastUpdate}`, {
       method: 'GET'})
       .then(response => response.json())
       .then(data => {
-        setLoadText("Fetch Done!")
-        setLastUpdate()
-
         fetch('http://localhost:8000/get_latest_date', {
           method: 'GET'})
           .then(response => response.json())
           .then(data => setLastUpdate(data))
 
-        fetch('http://localhost:8000/get_total_reviews', {
-          method: 'GET'})
-          .then(response => response.json())
-          .then(data => setTotalReviews(data))
+        // fetch('http://localhost:8000/get_total_reviews', {
+        //   method: 'GET'})
+        //   .then(response => response.json())
+        //   .then(data => setTotalReviews(data))
       })
   }
 
@@ -461,7 +416,6 @@ export default function Main() {
               <Button variant="contained" onClick={(e) => update_index(e)}>
                 Fetch Next 5 days Reviews
               </Button>
-              {loadText}
             </Toolbar>
           </AppBar>
         </div>
