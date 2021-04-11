@@ -37,10 +37,10 @@ npm install --force
 ```
 
 ### Elasticsearch
-1. Install and Run Elasticsearch 
+1. Install and Run Elasticsearch\
 From `https://www.elastic.co/downloads/elasticsearch` and follow the installation and run steps at the bottom of the page
 
-2. Indexing
+2. Indexing\
 Next, we are going to create an index "indeed" and index some documents.\
 \
 Under `./indexing`, run `python3 indexing.py` (command may vary based on OS).\
